@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     triggers {
-        // Supaya bisa ditrigger oleh GitHub webhook
         githubPush()
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -21,17 +21,17 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo 'Menjalankan pseudo-test (untuk demo).'
-                sh 'ls -lah'
+                echo 'Pseudo-test: list file'
+                bat 'dir'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploy ke Apache /var/www/html'
-                sh """
-                    rm -rf /var/www/html/*
-                    cp -r * /var/www/html/
+                echo 'Copy file ke folder web lokal'
+                bat """
+                    del /q C:\\deploy\\*
+                    xcopy * C:\\deploy\\ /E /Y
                 """
             }
         }
@@ -39,10 +39,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline sukses. Web sudah terupdate.'
+            echo 'Pipeline sukses!'
         }
         failure {
-            echo 'Pipeline gagal. Cek log di Console Output.'
+            echo 'Pipeline gagal!'
         }
     }
 }
